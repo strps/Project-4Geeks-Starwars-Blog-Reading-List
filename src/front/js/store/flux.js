@@ -20,16 +20,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 				console.log("Doing Example Functions")
 			},
 
-			//Get data for each element
-			getData: async (element, elementId) => {
-				let response = await fetch(`https://www.swapi.tech/api/people/1`)
+			//Get data for each element or collection
+			getData: async (element, id) => {
+				
+				let response = await fetch(`https://www.swapi.tech/api/${element}/${id?id:""}`)
 				if (response.ok){
 				response = await response.json()				
 				response = response.result||response.results
-				console.log(response)
 				}else{
 					console.error("Something went wrong: "+ response.statusText)
+					return null
 				}
+				return(response)
 			}
 
 
