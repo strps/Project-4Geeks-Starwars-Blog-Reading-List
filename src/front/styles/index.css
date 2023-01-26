@@ -1,3 +1,19 @@
-/* 
-    General Styles used on every website (Don't Repeat Yourself)
-*/
+html, body{
+    background-color: black;
+    color: yellow;
+}
+a{
+    color: yellow;
+}
+
+.home-card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  margin: 2em;
+  border: 0.1em solid yellow;
+  padding: 1em;
+}
+.home-card-container {}

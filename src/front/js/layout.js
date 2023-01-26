@@ -6,7 +6,11 @@ import { Home } from "./pages/home";
 import { Element } from "./pages/element.jsx";
 import { Collection } from "./pages/collection.jsx";
 import { Page404 } from "./pages/404.jsx";
+
+import { Navbar } from "./component/navbar"
+import { Footer } from "./component/footer"
 import injectContext from "./store/appContext";
+import { Component } from "react/cjs/react.production.min";
 
 
 
@@ -19,12 +23,16 @@ const Layout = () => {
     return (
         <div>
             <BrowserRouter basename={basename}>
+                <Navbar />
+                <div className="container">
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<Collection/>} path="/:element" />
-                        <Route element={<Element/>} path="/:element/:id" />
-                        <Route element={<Page404/>} path="*" />
+                        <Route element={<Collection />} path="/:element" />
+                        <Route element={<Element />} path="/:element/:id" />
+                        <Route element={<Page404 />} path="*" />
                     </Routes>
+                </div>
+                <Footer />
             </BrowserRouter>
         </div>
     );
