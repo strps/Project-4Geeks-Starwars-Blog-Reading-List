@@ -16,7 +16,7 @@ export const Home = () => {
 			types.map(async (e) => {
 				let res = await actions.getCollectionData(e)
 				res = res.results || res.result
-				setDataCollections((prev)=>[...prev, [e, res]])
+				setDataCollections((prev) => [...prev, [e, res]])
 			})
 
 		}
@@ -26,12 +26,16 @@ export const Home = () => {
 	return (
 		(dataCollections) ?
 			<div className="text-center mt-5">
-				{dataCollections.map((e) => {
+				{dataCollections.map((e, i) => {
 					return (
-						<div className="home-card-container" style={{display:"flex"}}>
-							<h2 className="col-12">{e[0]}</h2>
-							<CardCollection type={e[0]} data={e[1]} />
-							<Link to={e[0]}>More...</Link>
+						<div key={e[0]} className="home-card-container">
+							<h2 className="col-12">{e[0].toUpperCase()}</h2>
+							<div className="horizontal-scroll">
+								<CardCollection type={e[0]} data={e[1]} />
+								<div className="element-card p-2 col-12 more">
+									<Link to={e[0]+"?page=1"}>More...</Link>
+								</div>
+							</div>
 						</div>
 					)
 

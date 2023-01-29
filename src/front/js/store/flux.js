@@ -2,12 +2,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
 			Favorites: [],
-			Element: {}
+			Element: {},
+			Collection: {}
 		},
 		actions: {
 
 			//get Collection Data
 			getCollectionData: async (element, page = 1, limit = 5) => {
+
 				let response = await fetch(`https://www.swapi.tech/api/${element}?page=${page}&limit=${limit}`)
 				if (response.ok) {
 					response = await response.json()
@@ -15,6 +17,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Something went wrong: " + response.statusText)
 					return null
 				}
+				let str = getStore()
+				str.Collection = response.results
+				setStore(str)
 				return response
 			},
 
@@ -48,11 +53,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}else{
 					str.Favorites = [...str.Favorites, { name: name, type: type, uid: uid }]
 				}
-
-				
-				console.log(str)
 				setStore(str)
-
 			}, 
 
 

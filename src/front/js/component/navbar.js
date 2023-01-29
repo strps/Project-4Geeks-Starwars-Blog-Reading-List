@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
@@ -11,16 +10,32 @@ export const Navbar = () => {
 		<nav className="navbar navbar-dark bg-dark">
 			<div className="container">
 				<Link to="/">
-					<span className="navbar-brand mb-0 h1">LOGO</span>
+					<img className="logo" src="https://lumiere-a.akamaihd.net/v1/images/sw_logo_stacked_2x-52b4f6d33087_7ef430af.png" />
 				</Link>
 				<div className="ml-auto">
 					<div className="dropdown">
-						<button className="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+						<button
+							className="btn btn-secondary dropdown-toggle"
+							type="button"
+							data-bs-toggle="dropdown"
+							aria-expanded="false"
+						>
 							Favorites
 						</button>
 						<ul className="dropdown-menu">
-							{store.Favorites.map((e) => {
-								return(<li key={e.type+'-'+e.uid}><Link className="dropdown-item" to={e.type+'/'+e.uid}>{e.name}</Link></li>)
+							{(store.Favorites.length == 0) ? <li><p className="dropdown-item">No Favorites Added</p></li> :
+							store.Favorites.map((e) => {
+								return (
+									<li key={e.type + "-" + e.uid} className="fav-li">
+										<Link className="dropdown-item" to={e.type + "/" + e.uid}>
+											{e.name}
+										</Link>
+										<i
+											className="bi bi-trash"
+										//onClick={actions.toogleFav("", e.type, e.uid)}
+										></i>
+									</li>
+								);
 							})}
 						</ul>
 					</div>

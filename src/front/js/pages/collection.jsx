@@ -5,30 +5,34 @@ import { Link, useParams } from "react-router-dom";
 import { CardCollection } from "../component/cardCollection.jsx";
 import { Pagination } from "../component/pagination.jsx";
 import { Page404 } from "./404.jsx";
+import { useSearchParams } from "react-router-dom";
 
+import "../../styles/collection.css";
 
 export function Collection() {
     const { store, actions } = useContext(Context);
     const params = useParams();
+    let [searchParams, setSearchParams] = useSearchParams()
 
     const [data, setData] = useState(null)
+    const [pages, setPages] = useState()
 
     useEffect(() => {
         async function func() {
-            const response = await actions.getCollectionData(params.element)
+            const response = await actions.getCollectionData(params.element,searchParams.get("page"),10)
             setData(response.results)
+            setPages(response.total_pages)
         }
         func()
-    }, [])
+    }, [searchParams.get("page")])
 
     return (
         data ?
             <div>
-                <Pagination pages={10} currentPage={5} element="people" ></Pagination>
                 < h1 > {params.element.toUpperCase()}</h1 >
-                <p></p>
+                <Pagination pages={pages} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
                 <CardCollection data={data} type={params.element} />
-                <Pagination pages={10} currentPage={0} element="people" ></Pagination>
+                <Pagination pages={pages} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
             </div >
             :
             <Page404 />

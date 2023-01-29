@@ -1,19 +1,17 @@
 html, body{
     background-color: black;
-    color: yellow;
+    color: white;
 }
 a{
-    color: yellow;
+    color: white;
 }
 
-.home-card-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  gap: 1em;
-  margin: 2em;
-  border: 0.1em solid yellow;
-  padding: 1em;
+.logo{
+  height: 3em;
 }
-.home-card-container {}
+
+.fav-li{
+  display: flex;
+  padding-left: 0.25em;
+  padding-right: 1em;
+}

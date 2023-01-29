@@ -1,7 +1,68 @@
-/*
-    home.css: This website contains selectors only used in home.css
+.home-card-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin: 2em;
+    padding: 1em;
+  }
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+
+.element-card{
+    /* display: flex;
+    flex-direction: column; */
+    width: 15em;
+    background-color: rgb(43, 43, 43);
+    padding: 0.5em;
+}
+
+.element-card img{
+    width: 100%;
+}
+
+.element-card h2{
+    white-space: normal;
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.card-body > div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.card-btn{
+   color: white;
+   padding: 0.25em;
+   border: 0.1em solid white;
+   border-radius: 0.25em;
+   padding-left: 0.5em;
+   padding-right: 0.5em;
+}
+
+.horizontal-scroll{
+    display: flex;
+    gap: 1em;
+    overflow-x: scroll;
+    white-space: nowrap;
+    padding: 1em;
+
+}
+
+.more{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.more a{
+    display: flexbox;
+}

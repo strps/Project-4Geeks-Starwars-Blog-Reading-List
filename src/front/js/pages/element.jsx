@@ -34,6 +34,7 @@ export function Element() {
                         })
                     }
                 </ul>
+                <Link to={-1}>Atras</Link>
             </div >
             :
             <Page404 />
