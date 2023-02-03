@@ -15,3 +15,8 @@ a{
   padding-left: 0.25em;
   padding-right: 1em;
 }
+
+.yellow{
+  color: yellow!important;
+  border-color: yellow!important;
+}

@@ -27,7 +27,7 @@ export const Home = () => {
 			<div className="text-center mt-5">
 				{dataCollections.map((e, i) => {
 					return (
-						<div key={e[0]} className="home-card-container">
+						<div key={e[0]} className="home-card-collection-container">
 							<h2 className="col-12">{e[0].toUpperCase()}</h2>
 							<div className="horizontal-scroll">
 								<CardCollection type={e[0]} data={e[1]} />

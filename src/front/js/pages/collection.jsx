@@ -28,10 +28,12 @@ export function Collection() {
 
     return (
         data ?
-            <div>
+            <div className="container d-flex flex-column align-items-center">
                 < h1 > {params.element.toUpperCase()}</h1 >
                 <Pagination pages={pages} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
+                <div className="row g-2 mb-3">
                 <CardCollection data={data} type={params.element} />
+                </div>
                 <Pagination pages={pages} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
             </div >
             :

@@ -23,7 +23,7 @@ export function CardCollection(props) {
                                 <h2 className="card-title">{e.name}</h2>
                                 <div>
                                     <Link to={'/' + e.url.slice(27)} className="card-btn">Details</Link>
-                                    <i key={i + props.type} className={`card-btn bi bi-star${(isFavorite) ? '-fill' : ''}`} onClick={() => {
+                                    <i key={i + props.type} className={`card-btn bi bi-star${(isFavorite) ? '-fill yellow' : ''}`} onClick={() => {
                                         actions.toogleFav(e.name, props.type, e.uid)
                                     }}></i>
                                 </div>
