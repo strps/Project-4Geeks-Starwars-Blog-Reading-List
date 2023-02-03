@@ -13,7 +13,7 @@ export function Pagination({ currentPage, pages, element }) {
                 {
                     Array(pages).fill('').map((e,i)=>{
                         return(
-                            <li className={"page-item"+((currentPage==i+1)?" active":"")}><Link className="page-link" to={`/${element}?page=${i+1}`}>{i+1}</Link></li>                            
+                            <li key={i} className={"page-item"+((currentPage==i+1)?" active":"")}><Link className="page-link" to={`/${element}?page=${i+1}`}>{i+1}</Link></li>                            
                         )
                     })
                 }

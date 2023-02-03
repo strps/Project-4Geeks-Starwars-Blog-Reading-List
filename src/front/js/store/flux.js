@@ -5,6 +5,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			Element: {},
 			Collection: {}
 		},
+		
 		actions: {
 
 			//get Collection Data
@@ -55,7 +56,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 				setStore(str)
 			}, 
-
 
 		}
 	};

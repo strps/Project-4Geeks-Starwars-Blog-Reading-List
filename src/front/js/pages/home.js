@@ -18,7 +18,6 @@ export const Home = () => {
 				res = res.results || res.result
 				setDataCollections((prev) => [...prev, [e, res]])
 			})
-
 		}
 		func()
 	}, [])

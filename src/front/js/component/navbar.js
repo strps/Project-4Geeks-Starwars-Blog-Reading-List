@@ -24,19 +24,20 @@ export const Navbar = () => {
 						</button>
 						<ul className="dropdown-menu">
 							{(store.Favorites.length == 0) ? <li><p className="dropdown-item">No Favorites Added</p></li> :
-							store.Favorites.map((e) => {
-								return (
-									<li key={e.type + "-" + e.uid} className="fav-li">
-										<Link className="dropdown-item" to={e.type + "/" + e.uid}>
-											{e.name}
-										</Link>
-										<i
-											className="bi bi-trash"
-										//onClick={actions.toogleFav("", e.type, e.uid)}
-										></i>
-									</li>
-								);
-							})}
+								store.Favorites.map((e, id) => {
+									return (
+										<li key={id} className="fav-li">
+											<Link className="dropdown-item" to={e.type + "/" + e.uid}>
+												{e.name}
+											</Link>
+											<button onClick={()=>{actions.toogleFav(e.name, e.type, e.uid)}}>
+											<i
+												className="bi bi-trash"
+											></i>
+											</button>
+										</li>
+									);
+								})}
 						</ul>
 					</div>
 				</div>
