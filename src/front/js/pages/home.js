@@ -11,7 +11,7 @@ export const Home = () => {
 	const [dataCollections, setDataCollections] = useState([])
 
 	useEffect(() => {
-		let types = ["people", "starships", "vehicles", "species", "planets"]
+		let types = ["characters", "starships", "vehicles", "species", "planets"]
 		async function func() {
 			types.map(async (e) => {
 				let res = await actions.getCollectionData(e)

@@ -14,17 +14,15 @@ export function Collection() {
     const params = useParams();
     let [searchParams, setSearchParams] = useSearchParams()
 
-    const [data, setData] = useState(null)
-    const [pages, setPages] = useState()
-
     useEffect(() => {
         async function func() {
             const response = await actions.getCollectionData(params.element,searchParams.get("page"),10)
-            setData(response.results)
-            setPages(response.total_pages)
         }
         func()
     }, [searchParams.get("page")])
+    const pages = store.Collection['total pages']
+    const data = store.Collection['results']
+    console.log(params)
 
     return (
         data ?

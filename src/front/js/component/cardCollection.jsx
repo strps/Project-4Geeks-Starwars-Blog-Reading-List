@@ -4,27 +4,26 @@ import { Link } from "react-router-dom";
 
 import { Context } from "../store/appContext";
 
-export function CardCollection(props) {
+export function CardCollection({type, data}) {
     const { store, actions } = useContext(Context);
 
-    // console.log("Favorites:"+store.Favorites)
-    // console.log(store.Favorites)
+    console.log("data:"+ data)
 
 
     return (
         <>
             {
-                props.data.map((e, i) => {
-                    let isFavorite = store.Favorites.some((element) => (element.uid == e.uid && element.type == props.type))
+                data.map((e, i) => {
+                    let isFavorite = store.Favorites.some((element) => (element.id == e.id && element.type == type))
                     return (
-                        <div key={props.type + i} className="card element-card p-2 col-12">
-                            <img src={`https://starwars-visualguide.com/assets/img/${props.type == "people" ? "characters" : props.type}/${e.uid}.jpg`} alt="" />
+                        <div key={type + i} className="card element-card p-2 col-12">
+                            <img src={`https://starwars-visualguide.com/assets/img/${type == "people" ? "characters" : type}/${e.id}.jpg`} alt="" />
                             <div className="card-body">
                                 <h2 className="card-title">{e.name}</h2>
                                 <div>
-                                    <Link to={'/' + e.url.slice(27)} className="card-btn">Details</Link>
-                                    <i key={i + props.type} className={`card-btn bi bi-star${(isFavorite) ? '-fill yellow' : ''}`} onClick={() => {
-                                        actions.toogleFav(e.name, props.type, e.uid)
+                                    <Link to={'/'+ type + '/'+ e.id} className="card-btn">Details</Link>
+                                    <i key={i + type} className={`card-btn bi bi-star${(isFavorite) ? '-fill yellow' : ''}`} onClick={() => {
+                                        actions.toogleFav(e.name, type, e.id)
                                     }}></i>
                                 </div>
                             </div>

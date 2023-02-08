@@ -27,10 +27,10 @@ export const Navbar = () => {
 								store.Favorites.map((e, id) => {
 									return (
 										<li key={id} className="fav-li">
-											<Link className="dropdown-item" to={e.type + "/" + e.uid}>
+											<Link className="dropdown-item" to={e.type + "/" + e.id}>
 												{e.name}
 											</Link>
-											<button onClick={()=>{actions.toogleFav(e.name, e.type, e.uid)}}>
+											<button onClick={()=>{actions.toogleFav(e.name, e.type, e.id)}}>
 											<i
 												className="bi bi-trash"
 											></i>

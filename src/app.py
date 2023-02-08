@@ -12,12 +12,25 @@ from api.routes import api
 from api.admin import setup_admin
 from api.commands import setup_commands
 
+from flask_jwt_extended import JWTManager
+
+
 #from models import Person
 
 ENV = os.getenv("FLASK_ENV")
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+#Initializing a JWT managaer instance
+jwt = JWTManager(app)
+
+### blocked tokens verification
+@jwt.token_in_blocklist_loader
+def check_token_revoked(jwt_header, jwt_payload: dict) -> bool:
+    jti = jwt_payload["jti"]
+    token = BlockedTokens.query.filter(BlockedTokens.token_id == jti).first()
+    return token is not None
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -61,7 +74,7 @@ def serve_any_other_file(path):
         path = 'index.html'
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0 # avoid cache memory
-    return response
+    return jsonify({'msg': 'page not found'}), 404
 
 
 # this only runs if `$ python src/main.py` is executed

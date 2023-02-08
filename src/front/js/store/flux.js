@@ -1,9 +1,13 @@
+const apiUrl = process.env.BACKEND_URL+"/api"
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
+
 		store: {
 			Favorites: [],
 			Element: {},
-			Collection: {}
+			Collection: {},
+			HomeData:[]
 		},
 		
 		actions: {
@@ -11,48 +15,41 @@ const getState = ({ getStore, getActions, setStore }) => {
 			//get Collection Data
 			getCollectionData: async (element, page = 1, limit = 5) => {
 
-				let response = await fetch(`https://www.swapi.tech/api/${element}?page=${page}&limit=${limit}`)
+				let response = await fetch(apiUrl+`/${element}?page=${page}&limit=${limit}`)
 				if (response.ok) {
 					response = await response.json()
 				} else {
 					console.error("Something went wrong: " + response.statusText)
 					return null
 				}
-				let str = getStore()
-				str.Collection = response.results
-				setStore(str)
-				return response
+				setStore({Collection: response})
+			},
+
+			getHomeData : ()=>{
+
 			},
 
 
 			//Get data for each element
 			getElementData: async (element, id) => {
 
-				let response = await fetch(`https://www.swapi.tech/api/${element}/${id ? id : ""}`)
+				let response = await fetch(apiUrl+`/${element}/${id}`)
 				if (response.ok) {
 					response = await response.json()
-					response = response.result || response.results
 				} else {
 					console.error("Something went wrong: " + response.statusText)
 					return null
 				}
-				//Checking if the property is a url, if change
-				for (let prop in response.properties) {
-					if (response.properties[prop].includes("https")) {
-						response.properties[prop] = await parseURLtoLink(response.properties[prop])
-					}
-				}
-
 				return (response)
 			},
 
 			//Toogle from favorites
-			toogleFav: (name, type, uid) => {
+			toogleFav: (name, type, id) => {
 				let str = getStore()
-				if(str.Favorites.some((e) => e.type == type && e.uid == uid)){
-					str.Favorites = str.Favorites.filter((e)=> !(e.type == type && e.uid == uid))
+				if(str.Favorites.some((e) => e.type == type && e.id == id)){
+					str.Favorites = str.Favorites.filter((e)=> !(e.type == type && e.id == id))
 				}else{
-					str.Favorites = [...str.Favorites, { name: name, type: type, uid: uid }]
+					str.Favorites = [...str.Favorites, { name: name, type: type, id: id }]
 				}
 				setStore(str)
 			}, 

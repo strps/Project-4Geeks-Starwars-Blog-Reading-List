@@ -12,10 +12,10 @@ export function Element() {
     useEffect(() => {
         async function func() {
             const response = await actions.getElementData(params.element, params.id)
-            setData(response.properties)
+            setData(response)
         }
         func()
-    })
+    },[])
 
     return (
         data ?

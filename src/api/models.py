@@ -43,9 +43,23 @@ class Planet(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
             "name": self.name,
-            "created_by": self.created_by.serialize()
+            "diameter": self.diameter,
+            "rotation_period": self.rotation_period,
+            "orbital_period": self.orbital_period,
+            "gravity": self.gravity,
+            "population": self.population,
+            "climate": self.climate,
+            "terrain": self.terrain,
+            "surface_water": self.surface_water,
+            "created": self.created,
+            "edited": self.edited,            
+        }
+        
+    def serialize_c(self):
+        return {
+            "id": self.id,
+            "name": self.name
         }
 
 
@@ -72,7 +86,7 @@ class Character(db.Model):
 
     def serialize(self):
         return {
-            "id": self.id,
+            # "id": self.id,
             "name": self.name,
             "height": self.height,
             "mass": self.mass,
@@ -85,8 +99,14 @@ class Character(db.Model):
             "edited": self.edited,
             # "homeworld_id": self.homeworld_id,
             # "homeworld": self.homeworld,
-            "created_by_id": self.created_by_id,
-            "created_by": self.created_by.serialize()
+            #"created_by_id": self.created_by_id,
+            #"created_by": self.created_by.serialize()
+        }
+
+    def serialize_c(self):
+        return {
+            "id": self.id,
+            "name": self.name
         }
 
 
@@ -125,6 +145,12 @@ class Films(db.Model):
         # species
         # starships
         "title":self.title,
+        }
+
+    def serialize_c(self):
+        return {
+            "id": self.id,
+            "name": self.title
         }
 
 class Starships(db.Model):
@@ -174,6 +200,12 @@ class Starships(db.Model):
         "starship_class": self.starship_class
         # "url": self.url
         }
+    
+    def serialize_c(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
 
 
 
@@ -214,6 +246,12 @@ class Vehicles(db.Model):
         "vehicle_class": self.vehicle_class
         }
 
+    def serialize_c(self):
+        return {
+            "id": self.id,
+            "name": self.name
+        }
+
 
 class Species(db.Model):
     __tablename__ = "species"
@@ -247,6 +285,12 @@ class Species(db.Model):
             "language": self.language,
             "name": self.name,
             "skin_colors": self.skin_colors,
+        }
+
+    def serialize_c(self):
+        return {
+            "id": self.id,
+            "name": self.name
         }
 
 
@@ -306,3 +350,7 @@ class Favorites_Starships(db.Model):
     user = db.relationship('User')
     starship_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
     starship = db.relationship('Starships')
+
+class BlockedTokens(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    token_id = db.Column(db.String(200), unique = True)
