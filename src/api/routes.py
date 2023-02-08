@@ -19,9 +19,20 @@ crypto = Bcrypt(app)
 @api.route('/')
 def get_home():
     '''Get home information'''
-
-
-
+    characters = Character.query.limit(5).all()
+    planets = Planet.query.limit(5).all()
+    species = Species.query.limit(5).all()
+    vehicles = Vehicles.query.limit(5).all()
+    starships = Starships.query.limit(5).all()
+    films = Films.query.limit(5).all()
+    return jsonify({
+        'characters': [character.serialize_c() for character in characters],
+        'planets': [planet.serialize_c() for planet in planets],
+        'species': [species.serialize_c() for species in species],
+        'vehicles': [vehicle.serialize_c() for vehicle in vehicles],
+        'starships': [starship.serialize_c() for starship in starships],
+        'films': [film.serialize_c() for film in films],
+    })
 
 ################ Characters Routes ################
 

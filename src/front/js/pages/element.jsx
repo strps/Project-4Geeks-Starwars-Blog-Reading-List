@@ -7,15 +7,14 @@ export function Element() {
     const { store, actions } = useContext(Context);
     const params = useParams();
 
-    const [data, setData] = useState(null)
-
     useEffect(() => {
         async function func() {
             const response = await actions.getElementData(params.element, params.id)
-            setData(response)
         }
         func()
     },[])
+
+    const data = store.Element
 
     return (
         data ?

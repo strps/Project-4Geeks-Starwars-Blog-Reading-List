@@ -8,24 +8,20 @@ import { CardCollection } from "../component/cardCollection.jsx";
 export const Home = () => {
 	const { store, actions } = useContext(Context);
 
-	const [dataCollections, setDataCollections] = useState([])
-
 	useEffect(() => {
-		let types = ["characters", "starships", "vehicles", "species", "planets"]
 		async function func() {
-			types.map(async (e) => {
-				let res = await actions.getCollectionData(e)
-				res = res.results || res.result
-				setDataCollections((prev) => [...prev, [e, res]])
-			})
+			await actions.getHomeData()
 		}
 		func()
 	}, [])
 
+
+	console.log(store.HomeData)
+
 	return (
-		(dataCollections) ?
+		(store.HomeData) ?
 			<div className="text-center mt-5">
-				{dataCollections.map((e, i) => {
+				{store.HomeData.map((e, i) => {
 					return (
 						<div key={e[0]} className="home-card-collection-container">
 							<h2 className="col-12">{e[0].toUpperCase()}</h2>

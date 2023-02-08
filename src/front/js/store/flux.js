@@ -25,7 +25,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({Collection: response})
 			},
 
-			getHomeData : ()=>{
+			getHomeData : async ()=>{
+				let response = await fetch(apiUrl)
+				if(!response.ok){
+					console.log('there was an error:' + response.statusText)
+				}
+				let homeData = await response.json()
+				setStore({HomeData : homeData})
 
 			},
 
@@ -40,6 +46,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.error("Something went wrong: " + response.statusText)
 					return null
 				}
+				setStore({Element: response})
 				return (response)
 			},
 
