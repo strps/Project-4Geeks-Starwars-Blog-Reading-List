@@ -119,7 +119,7 @@ class Films(db.Model):
     created = db.Column(db.DateTime)
     edited = db.Column(db.DateTime)
     episode_id = db.Column(db.Integer)
-    opening_crawl = db.Column(db.String(120))
+    opening_crawl = db.Column(db.String(1000))
     # planets= db.Column()
     producer = db.Column(db.String(120))
     release_date = db.Column(db.Date)

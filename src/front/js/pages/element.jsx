@@ -14,6 +14,8 @@ export function Element() {
         func()
     },[])
 
+ 
+
     const data = store.Element
 
     return (

@@ -16,23 +16,20 @@ export function Collection() {
 
     useEffect(() => {
         async function func() {
-            const response = await actions.getCollectionData(params.element,searchParams.get("page"),10)
+            await actions.getCollectionData(params.element,searchParams.get("page"),10)
         }
         func()
     }, [searchParams.get("page")])
-    const pages = store.Collection['total pages']
-    const data = store.Collection['results']
-    console.log(params)
 
     return (
-        data ?
+        store.Collection ?
             <div className="container d-flex flex-column align-items-center">
                 < h1 > {params.element.toUpperCase()}</h1 >
-                <Pagination pages={pages} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
+                <Pagination pages={store.Collection['total pages']} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
                 <div className="row g-2 mb-3">
-                <CardCollection data={data} type={params.element} />
+                <CardCollection data={store.Collection['results']} type={params.element} />
                 </div>
-                <Pagination pages={pages} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
+                <Pagination pages={store.Collection['total pages']} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
             </div >
             :
             <Page404 />

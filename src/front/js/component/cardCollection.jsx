@@ -7,9 +7,6 @@ import { Context } from "../store/appContext";
 export function CardCollection({type, data}) {
     const { store, actions } = useContext(Context);
 
-    console.log("data:"+ data)
-
-
     return (
         <>
             {

@@ -5,9 +5,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		store: {
 			Favorites: [],
-			Element: {},
-			Collection: {},
-			HomeData:[]
+			// Element: {},
+			// Collection: {},
+			// HomeData:[]
 		},
 		
 		actions: {
@@ -29,9 +29,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 				let response = await fetch(apiUrl)
 				if(!response.ok){
 					console.log('there was an error:' + response.statusText)
+					return (false)
 				}
 				let homeData = await response.json()
 				setStore({HomeData : homeData})
+				return (true)
 
 			},
 

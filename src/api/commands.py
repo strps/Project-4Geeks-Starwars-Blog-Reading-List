@@ -1,6 +1,7 @@
 
 import click
 from api.models import db, User
+from loaddb import load_db
 
 """
 In this file, you can add as many commands as you want using the @app.cli.command decorator
@@ -28,5 +29,10 @@ def setup_commands(app):
             print("User: ", user.email, " created.")
 
         print("All test users created")
+
+    @app.cli.command("load-db") # name of our command
+   # @click.argument("count") # argument of out command
+    def insert_data():
+        load_db()
 
         ### Insert the code to populate others tables if needed
