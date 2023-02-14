@@ -10,7 +10,7 @@ export function CardCollection({type, data}) {
     return (
         <>
             {
-                data.map((e, i) => {
+                data?.map((e, i) => {
                     let isFavorite = store.Favorites.some((element) => (element.id == e.id && element.type == type))
                     return (
                         <div key={type + i} className="card element-card p-2 col-12">

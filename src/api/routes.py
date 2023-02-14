@@ -39,11 +39,18 @@ def get_home():
 @api.route('/characters')
 def get_characters():
     limit = request.args.get("limit", 10 ,type=int)
-    offset = request.args.get("offset", 0 ,type=int)
+    page = request.args.get("page", 1 ,type=int)
+    total_characters = Planet.query.count()
+    total_pages = math.ceil(total_characters/ limit)
+    if page > total_pages:
+        return jsonify({'msg':'page not found'}), 404
 
-    characters = Character.query.offset(offset).limit(limit).all()
-    response_body = list(map(lambda c: c.serialize_c(), characters))
-    return jsonify(response_body)
+    characters = Character.query.offset(limit*(page-1)).limit(limit).all()
+    response_body = list(map(lambda p: p.serialize_c(), characters))
+    return jsonify({
+        "total_records": total_characters,
+        'total pages': total_pages,
+        'results':response_body})
 
 @api.route('/characters/<int:id>')
 def get_character(id):
@@ -143,10 +150,18 @@ def get_starship_by_id(id):
 @api.route('/starships')
 def get_starships():
     limit = request.args.get("limit", 10 ,type=int)
-    offset = request.args.get("offset", 0 ,type=int)
+    page = request.args.get("page", 1 ,type=int)
+    total_starships = Planet.query.count()
+    total_pages = math.ceil(total_starships/ limit)
+    if page > total_pages:
+        return jsonify({'msg':'page not found'}), 404
 
-    starships = Starships.query.offset(offset).limit(limit).all()
-    return jsonify([starship.serialize_c() for starship in starships])
+    starships = Character.query.offset(limit*(page-1)).limit(limit).all()
+    response_body = list(map(lambda p: p.serialize_c(), starships))
+    return jsonify({
+        "total_records": total_starships,
+        'total pages': total_pages,
+        'results':response_body})
 
 ################ Vehicles Routes ################
 
@@ -160,10 +175,18 @@ def get_vehicle(id):
 @api.route('/vehicles')
 def get_vehicles():
     limit = request.args.get("limit", 10 ,type=int)
-    offset = request.args.get("offset", 0 ,type=int)
+    page = request.args.get("page", 1 ,type=int)
+    total_vehicles = Planet.query.count()
+    total_pages = math.ceil(total_vehicles/ limit)
+    if page > total_pages:
+        return jsonify({'msg':'page not found'}), 404
 
-    vehicles = Vehicles.query.offset(offset).limit(limit).all()
-    return jsonify([vehicle.serialize_c() for vehicle in vehicles])
+    vehicles = Character.query.offset(limit*(page-1)).limit(limit).all()
+    response_body = list(map(lambda p: p.serialize_c(), vehicles))
+    return jsonify({
+        "total_records": total_vehicles,
+        'total pages': total_pages,
+        'results':response_body})
 
 
 
@@ -179,10 +202,18 @@ def get_specie(id):
 @api.route('/species')
 def get_species():
     limit = request.args.get("limit", 10 ,type=int)
-    offset = request.args.get("offset", 0 ,type=int)
+    page = request.args.get("page", 1 ,type=int)
+    total_species = Planet.query.count()
+    total_pages = math.ceil(total_species/ limit)
+    if page > total_pages:
+        return jsonify({'msg':'page not found'}), 404
 
-    species = Species.query.offset(offset).limit(limit).all()
-    return jsonify([species.serialize_c() for species in species])
+    species = Character.query.offset(limit*(page-1)).limit(limit).all()
+    response_body = list(map(lambda p: p.serialize_c(), species))
+    return jsonify({
+        "total_records": total_species,
+        'total pages': total_pages,
+        'results':response_body})
 
 ################ Users Routes ################
 

@@ -31,7 +31,6 @@ def setup_commands(app):
         print("All test users created")
 
     @app.cli.command("load-db") # name of our command
-   # @click.argument("count") # argument of out command
     def insert_data():
         load_db()
 
