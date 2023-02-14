@@ -126,7 +126,6 @@ class Films(db.Model):
     # species= db.Column()
     # starships= db.Column()
     title = db.Column(db.String(120))
-    # url= db.Column()
     # vehicles= db.Column()
 
     def __repr__(self):
@@ -174,7 +173,6 @@ class Starships(db.Model):
     # pilots= db.Column()
     # ": "Deep Space Mobile Battlestation",
     starship_class = db.Column(db.String(120))
-    # url= db.Column()
 
     def __repr__():
         return '<Starship %r>' % self.name
@@ -198,7 +196,6 @@ class Starships(db.Model):
         # "films": self.films,
         # "pilots": self.pilots,
         "starship_class": self.starship_class
-        # "url": self.url
         }
     
     def serialize_c(self):
@@ -226,7 +223,6 @@ class Vehicles(db.Model):
     passengers = db.Column(db.Integer)
     # pilots=db.Column()
     # films=db.Column()
-    # url=db.Column()
     vehicle_class = db.Column(db.String(120))
 
     def serialize(self):
@@ -270,7 +266,7 @@ class Species(db.Model):
     #people = db.Column(db.String(120))
     #films = db.Column(db.String(120))
     skin_colors = db.Column(db.String(120))
-    #url = db.Column(db.String(120))
+  
 
     def serialize(self):
         return {
@@ -300,8 +296,8 @@ class Favorites_Planets(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
-    planet_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
-    planet = db.relationship('Planet')
+    element_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
+    element = db.relationship('Planet')
 
 
 class Favorites_Characters(db.Model):
@@ -310,8 +306,8 @@ class Favorites_Characters(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
-    planet_id = db.Column(db.Integer, db.ForeignKey('character.id'))
-    planet = db.relationship('Character')
+    element_id = db.Column(db.Integer, db.ForeignKey('character.id'))
+    element = db.relationship('Character')
 
 
 class Favorites_Vehicles(db.Model):
@@ -320,8 +316,8 @@ class Favorites_Vehicles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
-    vehicle_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
-    vehicle = db.relationship('Vehicles')
+    element_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
+    element = db.relationship('Vehicles')
 
 
 class Favorites_Species(db.Model):
@@ -330,17 +326,17 @@ class Favorites_Species(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
-    species_id = db.Column(db.Integer, db.ForeignKey('species.id'))
-    species = db.relationship('Species')
+    element_id = db.Column(db.Integer, db.ForeignKey('species.id'))
+    element = db.relationship('Species')
 
 class Favorites_Films(db.Model):
     '''Favorites Films'''
     __tablename__ = 'favorites_films'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    #id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     user = db.relationship('User')
-    film_id = db.Column(db.Integer, db.ForeignKey('films.id'))
-    film = db.relationship('Films')
+    element_id = db.Column(db.Integer, db.ForeignKey('films.id'), primary_key=True)
+    element = db.relationship('Films')
 
 class Favorites_Starships(db.Model):
     '''Favorites Starships'''
@@ -348,8 +344,8 @@ class Favorites_Starships(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User')
-    starship_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
-    starship = db.relationship('Starships')
+    element_id = db.Column(db.Integer, db.ForeignKey('starships.id'))
+    element = db.relationship('Starships')
 
 class BlockedTokens(db.Model):
     id = db.Column(db.Integer, primary_key = True)

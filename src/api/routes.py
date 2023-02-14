@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import math
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Character, Planet, Species, Vehicles, Starships, Films
+from api.models import db, User, Character, Planet, Species, Vehicles, Starships, Films, Favorites_Characters, Favorites_Films, Favorites_Planets, Favorites_Species, Favorites_Starships, Favorites_Vehicles
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token, get_jwt
 from api.utils import generate_sitemap, APIException
 
@@ -221,24 +221,54 @@ def get_users():
     response_body = list(map(lambda u: u.serialize(), users))
     return jsonify(response_body)
 
-@api.route("/users/favorites")
+@api.route("/favorites")
+@jwt_required()
 def get_favorites():
+
     return 'Favorites', 200
 
-@api.route("/favorite/planet/<int:planet_id>", methods= ["POST"])
-def add_favorite_planet():
-    '''Add favorite planet'''
+@api.route("/favorites", methods = ['POST'])
+@jwt_required()
+def post_favorites():
+    user_id = get_jwt_identity()
+    element_type = request.json.get('element')
+    element_id = request.json.get('id')
+    match element_type:
+        case 'character':
+            favorite = Favorites_Characters(user_id= user_id, element_id = element_id)
+        case 'film':
+            favorite = Favorites_Films(user_id= user_id, element_id = element_id)
+        case 'species':
+            favorite = Favorites_Species(user_id= user_id, element_id = element_id)
+        case 'planet':
+            favorite = Favorites_Planets(user_id= user_id, element_id = element_id)
+        case 'vehicles':
+            favorite = Favorites_Vehicles(user_id= user_id, element_id = element_id)
+        case 'starship':
+            favorite = Favorites_Starships(user_id= user_id, element_id = element_id)
+        case _:
+            return jsonify({'msg': 'element type not recognised'}), 400
+    db.session.add(favorite)
+    db.session.commit()
+    return 'Favorites', 200
 
-@api.route("/favorite/character/<int:planet_id>", methods= ["POST"])
-def add_favorite_character():
+@api.route("/favorites/<e_type>/<int:e_id>", methods= ["POST"])
+@jwt_required()
+def add_favorite_character(e_type, e_id):
+    print(e_type + e_id)
+    return jsonify({'msg':'ok'})
     '''Add Favorite Character'''
 
-@api.route("/favorite/planet/<int:planet_id>", methods= ["DELETE"])
-def delete_favorite_planet():
+@api.route("/favorites/<e_type>/<int:e_id>", methods= ["DELETE"])
+@jwt_required()
+def delete_favorite_planet(e_type, e_id):
     '''Delete Favorite Planet'''
 
-@api.route("/favorite/character/<int:planet_id>", methods= ["DELETE"])
-def delete_favorite_character():
-    '''Delete Favorite Character'''
-  
+@app.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh():
+    identity = get_jwt_identity()
+    access_token = create_access_token(identity=identity)
+    return jsonify(access_token=access_token)
+
 
