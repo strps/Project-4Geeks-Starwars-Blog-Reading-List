@@ -11,6 +11,9 @@ import { Navbar } from "./component/navbar"
 import { Footer } from "./component/footer"
 import injectContext from "./store/appContext";
 import { Component } from "react/cjs/react.production.min";
+import { Signup } from "./pages/signup.jsx";
+import { Login } from "./pages/login.jsx";
+import {Favorites} from "./pages/favorites.jsx"
 
 
 
@@ -30,7 +33,10 @@ const Layout = () => {
                         <Route element={<Collection />} path="/:element" />
                         <Route element={<Element />} path="/:element/:id" />
                         <Route element={<Page404 />} path="*" />
-                    </Routes>
+                        <Route element={<Signup/>} path="signup"/>
+                        <Route element={<Login/>} path="login"/>
+                        <Route element={<Favorites/>} path="favorites"/>
+                    </Routes>                        
                 </div>
                 <Footer />
             </BrowserRouter>

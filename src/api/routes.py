@@ -252,11 +252,6 @@ def get_users():
     response_body = list(map(lambda u: u.serialize(), users))
     return jsonify(response_body)
 
-@api.route("/favorites")
-@jwt_required()
-def get_favorites():
-
-    return 'Favorites', 200
 
 @api.route("/favorites", methods = ['POST'])
 @jwt_required()
@@ -264,36 +259,91 @@ def post_favorites():
     user_id = get_jwt_identity()
     element_type = request.json.get('element')
     element_id = request.json.get('id')
+    msg = ""
     match element_type:
         case 'character':
             favorite = Favorites_Characters(user_id= user_id, element_id = element_id)
-        case 'film':
+        case 'films':
             favorite = Favorites_Films(user_id= user_id, element_id = element_id)
         case 'species':
             favorite = Favorites_Species(user_id= user_id, element_id = element_id)
-        case 'planet':
+        case 'planets':
             favorite = Favorites_Planets(user_id= user_id, element_id = element_id)
         case 'vehicles':
             favorite = Favorites_Vehicles(user_id= user_id, element_id = element_id)
-        case 'starship':
+        case 'starships':
             favorite = Favorites_Starships(user_id= user_id, element_id = element_id)
         case _:
             return jsonify({'msg': 'element type not recognised'}), 400
+
     db.session.add(favorite)
-    db.session.commit()
-    return 'Favorites', 200
+    try:
+        db.session.commit()
+    except:
+        return 'Favorite already in user favorites', 200
 
-@api.route("/favorites/<e_type>/<int:e_id>", methods= ["POST"])
-@jwt_required()
-def add_favorite_character(e_type, e_id):
-    print(e_type + e_id)
-    return jsonify({'msg':'ok'})
-    '''Add Favorite Character'''
+    return 'Favorite added', 200
 
-@api.route("/favorites/<e_type>/<int:e_id>", methods= ["DELETE"])
+@api.route("/favorites", methods = ['DELETE'])
 @jwt_required()
-def delete_favorite_planet(e_type, e_id):
-    '''Delete Favorite Planet'''
+def delete_favorites():
+    user_id = get_jwt_identity()
+    element_type = request.json.get('element')
+    element_id = request.json.get('id')
+    msg = ""
+    match element_type:
+        case 'characters':
+            favorite = Favorites_Characters(user_id= user_id, element_id = element_id)
+        case 'films':
+            favorite = Favorites_Films(user_id= user_id, element_id = element_id)
+        case 'species':
+            favorite = Favorites_Species(user_id= user_id, element_id = element_id)
+        case 'planets':
+            favorite = Favorites_Planets(user_id= user_id, element_id = element_id)
+        case 'vehicles':
+            favorite = Favorites_Vehicles(user_id= user_id, element_id = element_id)
+        case 'starships':
+            favorite = Favorites_Starships(user_id= user_id, element_id = element_id)
+        case _:
+            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+            return jsonify({'msg': 'element type not recognised'}), 400
+    
+    try:
+        db.session.add(favorite)
+        db.session.commit()
+    except:
+        return 'Hola', 400
+    return 'Favorite added', 200
+
+
+@api.route("favorites")
+@jwt_required()
+def get_favorites():
+    user_id = get_jwt_identity()
+    #Querying for user favorites
+    characters = Favorites_Characters.query.filter(Favorites_Characters.user_id == user_id).all()
+    films = Favorites_Films.query.filter(Favorites_Films.user_id == user_id).all()
+    species = Favorites_Species.query.filter(Favorites_Species.user_id == user_id).all()
+    planets = Favorites_Planets.query.filter(Favorites_Planets.user_id == user_id).all()
+    vehicles = Favorites_Vehicles.query.filter(Favorites_Vehicles.user_id == user_id).all()
+    starships = Favorites_Starships.query.filter(Favorites_Starships.user_id == user_id).all()
+
+    response = jsonify({
+        'characters' : ([character.serialize() for character in characters]),
+        'films' : ([film.serialize() for film in films]),
+        'species' : ([specie.serialize() for specie in species]),
+        'planets' : ([planet.serialize() for planet in planets]),
+        'vehicles' : ([vehicle.serialize() for vehicle in vehicles]),
+        'starships' : ([starship.serialize() for starship in starships]),}
+    )
+
+    return response
+
+    
+    
+
+
+
 
 @app.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)

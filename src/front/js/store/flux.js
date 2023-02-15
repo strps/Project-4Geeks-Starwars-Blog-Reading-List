@@ -63,26 +63,59 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore(str)
 			}, 
 
+			login: async (email, password) => {
+				const resp = await fetch(apiUrl + '/login', {
+					method: 'POST',
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({ email, password })
+				})
+				if (!resp.ok) {
+					return resp.statusText
+				}
+				const data = await resp.json()
+				setStore({ refreshToken: data.refreshToken, accessToken: data.accessToken })
+				localStorage.setItem("accessToken", data.accessToken)
+				localStorage.setItem("refreshToken", data.refreshToken)
+				return true
+			},
+
+			signup: async (email, password)=>{
+				let response = await fetch(apiUrl+'/signup',{
+					method: 'POST',
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify({ email, password })
+				})
+				if(!response.ok){
+					console.error("There was a problem registering new user:"+ response.statusText)
+				}
+				console.log("New user registered")
+
+			},
+
+			logout : async()=>{
+				let resp = await fetch(apiUrl+"/logout", {
+					method : 'POST',
+					headers : {
+						...getActions().getAuthHeader()
+					}
+				})
+				if(!resp.ok){
+					console.error('There was an error at closing session:'+resp.statusText)
+					return false
+				}
+				localStorage.removeItem("accessToken")
+				localStorage.removeItem("refreshToken")
+				setStore({ refreshToken: null, accessToken: null })
+				return true
+			},
+
 		}
 	};
 };
 
-//Takes a valid SWAPI url and return the name and the path to be use in a Link Component from ReacRouter
-async function parseURLtoLink(url) {
-	let newURL = new URL(url)
 
-	let name = await fetch(newURL)
-	if (name.ok) {
-		name = await name.json()
-		name = name.result || name.results
-		name = name.properties.name
-	} else {
-		console.error("Something went wrong: " + name.statusText)
-	}
-
-	return {
-		path: newURL.pathname.slice(5),
-		name: name
-	}
-}
 export default getState;

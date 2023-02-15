@@ -9,9 +9,7 @@ export const Home = () => {
 	const { store, actions } = useContext(Context);
 
 	useEffect(() => {
-		console.log("Using Effec")
 		async function func() {
-			console.log("getting home data")
 			await actions.getHomeData()
 		}
 		func()
@@ -44,6 +42,7 @@ export const Home = () => {
 				<HomeCollectionContainer type = "species" Collectiondata={store.HomeData.species}/>
 				<HomeCollectionContainer type = "planets" Collectiondata={store.HomeData.planets}/>
 			</div>
-			: <h1>Loading</h1>
+			:
+			<h1>Loading</h1>
 	);
 };
