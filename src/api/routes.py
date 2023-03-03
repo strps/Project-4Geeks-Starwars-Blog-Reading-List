@@ -3,7 +3,7 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 """
 import math
 from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User, Character, Planet, Species, Vehicles, Starships, Films, Favorites_Characters, Favorites_Films, Favorites_Planets, Favorites_Species, Favorites_Starships, Favorites_Vehicles
+from api.models import db, User, Character, Planet, Species, Vehicles, Starships, Films, Favorites_Characters, Favorites_Films, Favorites_Planets, Favorites_Species, Favorites_Starships, Favorites_Vehicles, BlockedTokens
 from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token, get_jwt
 from api.utils import generate_sitemap, APIException
 
@@ -18,7 +18,7 @@ crypto = Bcrypt(app)
 
 @api.route('/')
 def get_home():
-    '''Get home information'''
+    '''Get home informations'''
     characters = Character.query.limit(5).all()
     planets = Planet.query.limit(5).all()
     species = Species.query.limit(5).all()
@@ -233,8 +233,10 @@ def new_user():
         return jsonify({'msg':"email already in use"}), 500
     return jsonify({'msg':"user created"}), 200
 
+
 @api.route('/login', methods = ['POST'])
 def login():
+    print('login')
     email = request.json.get('email')
     password = request.json.get('password')
     user = User.query.filter(User.email == email).first()
@@ -316,7 +318,7 @@ def delete_favorites():
     return 'Favorite added', 200
 
 
-@api.route("favorites")
+@api.route("/favorites")
 @jwt_required()
 def get_favorites():
     user_id = get_jwt_identity()
@@ -339,17 +341,14 @@ def get_favorites():
 
     return response
 
-    
-    
-
-
-
-
-@app.route("/refresh", methods=["POST"])
+@api.route("/refresh")
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
-    access_token = create_access_token(identity=identity)
-    return jsonify(access_token=access_token)
+    db.session.add(BlockedTokens(token_id = get_jwt()['jti']))
+    db.session.commit()
+    access_token = create_access_token(identity = identity)
+    refresh_token = create_refresh_token(identity = identity)
+    return jsonify({'access_token': access_token, 'refresh_token': refresh_token} )
 
 

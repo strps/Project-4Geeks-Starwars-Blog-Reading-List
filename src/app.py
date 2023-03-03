@@ -2,6 +2,7 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+from datetime import timedelta
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
@@ -15,12 +16,18 @@ from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
 
 
+ACCESS_EXPIRES = timedelta(seconds=5)
+
 #from models import Person
 
 ENV = os.getenv("FLASK_ENV")
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../public/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+
+#configuring the key enviroment variable
+app.config['JWT_SECRET_KEY'] = os.getenv('FLASK_APP_KEY')
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = ACCESS_EXPIRES
 
 #Initializing a JWT managaer instance
 jwt = JWTManager(app)
