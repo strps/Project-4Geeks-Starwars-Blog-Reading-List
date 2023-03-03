@@ -313,13 +313,10 @@ class Favorites_Planets(db.Model):
 class Favorites_Characters(db.Model):
     '''Favorites Characters'''
     __tablename__ = 'favorites_characters'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     user = db.relationship('User')
-    element_id = db.Column(db.Integer, db.ForeignKey('character.id'))
-    element = db.relationship('Character')
-
-    # character = db.relationship('Character', backref='Favorites_Characters', lazy=True)
+    element_id = db.Column(db.Integer, db.ForeignKey('character.id'), primary_key=True)
+    character = db.relationship('Character', backref='Favorites_Characters', lazy=True)
 
     def serialize(self):
         return {

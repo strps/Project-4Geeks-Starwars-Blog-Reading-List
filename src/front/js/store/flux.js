@@ -5,20 +5,19 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		store: {
 			Favorites: {
-				characters:[],
-				films:[],
-				planets:[],
-				species:[],
-				starships:[],
-				vehicles:[]
-			}, 
+				characters: [],
+				films: [],
+				planets: [],
+				species: [],
+				starships: [],
+				vehicles: []
+			},
 
 		},
 
 		actions: {
 
 			loadTokens: () => {
-				console.log("loadTokens")
 				let accessToken = localStorage.getItem('accessToken')
 				let refreshToken = localStorage.getItem('refreshToken')
 				setStore({ refreshToken: refreshToken, accessToken: accessToken })
@@ -78,9 +77,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			//Get favorites form back end
 			getFavorites: async () => {
-				console.log(getStore().accessToken)
-				let response = await fetchProtected(`${apiUrl}/favorites`, {
-				})
+				let response = await fetchProtected(`${apiUrl}/favorites`)
+				const data = await response.json()
+				setStore({Favorites : data})
 
 			},
 
@@ -100,7 +99,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ refreshToken: data.refreshToken, accessToken: data.accessToken })
 				localStorage.setItem("accessToken", data.accessToken)
 				localStorage.setItem("refreshToken", data.refreshToken)
-				
+
 				//load user favorites
 				resp = await fetch(`${apiUrl}/favorites`, {
 					headers: {
@@ -149,36 +148,37 @@ const getState = ({ getStore, getActions, setStore }) => {
 		}
 	};
 
-	async function fetchProtected (resource = '', options = {}) {
+	async function fetchProtected(resource = '', options = {}) {
 		console.log('fetching protected')
-		const {headers, ...opt} = options
+		const { headers, ...opt } = options
 		let response = await fetch(resource = resource, options = {
 			...opt,
-			headers : {
+			headers: {
 				...headers,
 				"Authorization": 'Bearer ' + getStore().accessToken
 			}
 		})
-		if(!response.ok){
+		if (!response.ok) {
 			const msg = (await response.json()).msg
-			if(msg == "Token has expired"){
+			if (msg == "Token has expired") {
 				console.log('refreshing token')
-				response = await fetch(`${apiUrl}/refresh`,{
-					headers : {
+				response = await fetch(`${apiUrl}/refresh`, {
+					headers: {
 						"Authorization": 'Bearer ' + getStore().refreshToken
 					}
 				})
-				if(!response.ok){
+				if (!response.ok) {
 					return response.statusText
 				}
-				let data = await reponse.json()
-				setStore({ refreshToken: data.refreshToken, accessToken: data.accessToken })
-				localStorage.setItem("accessToken", data.accessToken)
-				localStorage.setItem("refreshToken", data.refreshToken)
+				let data = await response.json()
+				setStore({ refreshToken: data.refresh_token, accessToken: data.access_token })
+				localStorage.setItem("accessToken", data.access_token)
+				localStorage.setItem("refreshToken", data.refresh_token)
 				fetchProtected(resource, options)
 			}
+		}else{
+			return response
 		}
-	
 	}
 };
 
