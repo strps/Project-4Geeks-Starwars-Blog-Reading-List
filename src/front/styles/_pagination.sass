@@ -1,0 +1,30 @@
+@use 'colors'
+
+.pagination
+    list-style: none
+    display: flex
+
+    .page-item
+        padding: 0.5em
+        background-color: colors.$sw-2
+        border: solid 1px colors.$sw-1
+
+    .active
+        border-color: colors.$sw-3
+
+    .disabled a
+        @include colors.disabled
+        pointer-events: none
+        cursor: default
+        text-decoration: none
+  
+        
+        
+
+
+    
+
+    a
+        color: colors.$sw-3
+        text-decoration: none
+        

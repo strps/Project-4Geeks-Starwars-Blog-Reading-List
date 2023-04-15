@@ -4,8 +4,9 @@ This module takes care of starting the API Server, Loading the DB and Adding the
 import math
 from flask import Flask, request, jsonify, url_for, Blueprint
 from api.models import db, User, Character, Planet, Species, Vehicles, Starships, Films, Favorites_Characters, Favorites_Films, Favorites_Planets, Favorites_Species, Favorites_Starships, Favorites_Vehicles, BlockedTokens
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token, get_jwt
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token, create_refresh_token, get_jwt, get_jti
 from api.utils import generate_sitemap, APIException
+from sqlalchemy.exc import IntegrityError
 
 from flask_bcrypt import Bcrypt
 
@@ -36,27 +37,29 @@ def get_home():
 
 ################ Characters Routes ################
 
+
 @api.route('/characters')
 def get_characters():
-    limit = request.args.get("limit", 10 ,type=int)
-    page = request.args.get("page", 1 ,type=int)
+    limit = request.args.get("limit", 10, type=int)
+    page = request.args.get("page", 1, type=int)
     total_characters = Planet.query.count()
-    total_pages = math.ceil(total_characters/ limit)
+    total_pages = math.ceil(total_characters / limit)
     if page > total_pages:
-        return jsonify({'msg':'page not found'}), 404
+        return jsonify({'msg': 'page not found'}), 404
 
     characters = Character.query.offset(limit*(page-1)).limit(limit).all()
     response_body = list(map(lambda p: p.serialize_c(), characters))
     return jsonify({
         "total_records": total_characters,
         'total pages': total_pages,
-        'results':response_body})
+        'results': response_body})
+
 
 @api.route('/characters/<int:id>')
 def get_character(id):
     character = Character.query.get(id).serialize()
     if character is None:
-        return jsonify({"msg":"character not found"}), 404
+        return jsonify({"msg": "character not found"}), 404
     return jsonify(character)
 
 
@@ -64,42 +67,46 @@ def get_character(id):
 
 @api.route('/planets')
 def get_planets():
-    limit = request.args.get("limit", 10 ,type=int)
-    page = request.args.get("page", 1 ,type=int)
+    limit = request.args.get("limit", 10, type=int)
+    page = request.args.get("page", 1, type=int)
     total_planets = Planet.query.count()
-    total_pages = math.ceil(total_planets/ limit)
+    total_pages = math.ceil(total_planets / limit)
     if page > total_pages:
-        return jsonify({'msg':'page not found'}), 404
+        return jsonify({'msg': 'page not found'}), 404
 
     planets = Planet.query.offset(limit*(page-1)).limit(limit).all()
     response_body = list(map(lambda p: p.serialize_c(), planets))
     return jsonify({
         "total_records": total_planets,
         'total pages': total_pages,
-        'results':response_body})
+        'results': response_body})
+
 
 @api.route('/planets/<int:id>')
 def get_planet(id):
     planet = Planet.query.get(id).serialize_c()
     if planet is None:
-        return jsonify({"msg":"planet not found"}), 404
+        return jsonify({"msg": "planet not found"}), 404
     return jsonify(planet), 200
+
 
 @api.route("/planets", methods=['POST'])
 def create_planet():
     name = request.json.get('name')
     gravity = request.json.get('gravity')
     created_by_id = request.json.get("created_by_id")
-    new_planet = Planet(name = name, gravity = gravity, created_by_id = created_by_id)
+    new_planet = Planet(name=name, gravity=gravity,
+                        created_by_id=created_by_id)
     db.session.add(new_planet)
     db.session.commit()
-    return "ok" , 201
+    return "ok", 201
 
-@api.route("/planets/<int:id>", methods = ['PATCH'])
+
+@api.route("/planets/<int:id>", methods=['PATCH'])
 def update_planet(id):
     planet = Planet.query.get(id)
     if planet is None:
-        return jsonify({"msg":"planet not found"}), 404
+        return jsonify({"msg": "planet not found"}), 404
     if request.json.get('name') is not None:
         planet.name = request.json.get('name')
     if request.json.get('gravity') is not None:
@@ -112,16 +119,18 @@ def update_planet(id):
 
     return jsonify(planet.serialize()), 200
 
+
 @api.route('/planets/<int:id>', methods=['DELETE'])
 def delete_planet(id):
     planet = Planet.query.get(id)
     if planet is None:
-        return jsonify({"msg":"planet not found"}), 404
+        return jsonify({"msg": "planet not found"}), 404
     db.session.delete(planet)
     db.session.commit()
-    return jsonify({"msg":"Planet deleted"})
+    return jsonify({"msg": "Planet deleted"})
 
 ################ Films Routes ################
+
 
 @api.route('/films/<int:film_id>', methods=['GET'])
 def get_film(film_id):
@@ -130,15 +139,17 @@ def get_film(film_id):
         return jsonify({'msg': 'Film not found'}), 404
     return jsonify(film.serialize())
 
+
 @api.route('/films')
 def get_films():
-    limit = request.args.get("limit", 10 ,type=int)
-    offset = request.args.get("offset", 0 ,type=int)
+    limit = request.args.get("limit", 10, type=int)
+    offset = request.args.get("offset", 0, type=int)
 
     films = Films.query.offset(offset).limit(limit).all()
     return jsonify([film.serialize_c() for film in films])
 
 ################ Starships Routes ################
+
 
 @api.route('/starships/<int:id>', methods=['GET'])
 def get_starship_by_id(id):
@@ -147,23 +158,25 @@ def get_starship_by_id(id):
         return jsonify({'msg': 'Starship not found'}), 404
     return jsonify(starship.serialize())
 
+
 @api.route('/starships')
 def get_starships():
-    limit = request.args.get("limit", 10 ,type=int)
-    page = request.args.get("page", 1 ,type=int)
+    limit = request.args.get("limit", 10, type=int)
+    page = request.args.get("page", 1, type=int)
     total_starships = Planet.query.count()
-    total_pages = math.ceil(total_starships/ limit)
+    total_pages = math.ceil(total_starships / limit)
     if page > total_pages:
-        return jsonify({'msg':'page not found'}), 404
+        return jsonify({'msg': 'page not found'}), 404
 
     starships = Character.query.offset(limit*(page-1)).limit(limit).all()
     response_body = list(map(lambda p: p.serialize_c(), starships))
     return jsonify({
         "total_records": total_starships,
         'total pages': total_pages,
-        'results':response_body})
+        'results': response_body})
 
 ################ Vehicles Routes ################
+
 
 @api.route('/vehicles/<int:id>', methods=['GET'])
 def get_vehicle(id):
@@ -172,22 +185,22 @@ def get_vehicle(id):
         return jsonify({'msg': 'Vehicle not found'}), 404
     return jsonify(vehicle.serialize())
 
+
 @api.route('/vehicles')
 def get_vehicles():
-    limit = request.args.get("limit", 10 ,type=int)
-    page = request.args.get("page", 1 ,type=int)
+    limit = request.args.get("limit", 10, type=int)
+    page = request.args.get("page", 1, type=int)
     total_vehicles = Planet.query.count()
-    total_pages = math.ceil(total_vehicles/ limit)
+    total_pages = math.ceil(total_vehicles / limit)
     if page > total_pages:
-        return jsonify({'msg':'page not found'}), 404
+        return jsonify({'msg': 'page not found'}), 404
 
     vehicles = Character.query.offset(limit*(page-1)).limit(limit).all()
     response_body = list(map(lambda p: p.serialize_c(), vehicles))
     return jsonify({
         "total_records": total_vehicles,
         'total pages': total_pages,
-        'results':response_body})
-
+        'results': response_body})
 
 
 ################ Species Routes ################
@@ -199,54 +212,75 @@ def get_specie(id):
         return jsonify({'msg': 'Species not found'}), 404
     return jsonify(species.serialize())
 
+
 @api.route('/species')
 def get_species():
-    limit = request.args.get("limit", 10 ,type=int)
-    page = request.args.get("page", 1 ,type=int)
+    limit = request.args.get("limit", 10, type=int)
+    page = request.args.get("page", 1, type=int)
     total_species = Planet.query.count()
-    total_pages = math.ceil(total_species/ limit)
+    total_pages = math.ceil(total_species / limit)
     if page > total_pages:
-        return jsonify({'msg':'page not found'}), 404
+        return jsonify({'msg': 'page not found'}), 404
 
     species = Character.query.offset(limit*(page-1)).limit(limit).all()
     response_body = list(map(lambda p: p.serialize_c(), species))
     return jsonify({
         "total_records": total_species,
         'total pages': total_pages,
-        'results':response_body})
+        'results': response_body})
 
 ################ Users Routes ################
+
 
 @api.route('/signup', methods=['POST'])
 def new_user():
     print("signing up")
     email = request.json.get('email')
     password = request.json.get('password')
+    print(password)
+    
+    if password == '' or email == '' or password is None or email is None:
+        return jsonify({'msg': "empty field"}), 400 
+
     password = crypto.generate_password_hash(password, 10).decode('utf-8')
     print(email)
-    user = User(email=email, password = password, is_active = True)
+    user = User(email=email, password=password, is_active=True)
     db.session.add(user)
     try:
         db.session.commit()
-    except IntegrityError:
+    except IntegrityError as e:
         db.session.rollback()
-        return jsonify({'msg':"email already in use"}), 500
-    return jsonify({'msg':"user created"}), 200
+        return jsonify({'msg': "email already in use"}), 409
+
+    return jsonify({'msg': "user created"}), 200
 
 
-@api.route('/login', methods = ['POST'])
-def login():
-    print('login')
-    email = request.json.get('email')
-    password = request.json.get('password')
-    user = User.query.filter(User.email == email).first()
+@api.route('/login', methods=['POST'])
+def user_login():
+    email = request.json.get("email")
+    password = request.json.get("password")
+    user = User.query.filter_by(email=email).first()
     if user is None:
-        return jsonify({'msg':"Login fail"}), 401
+        return jsonify({"msg": "Login Failed"}), 401
     if not crypto.check_password_hash(user.password, password):
-        return jsonify({'msg':"Login fail"}), 401
-    token = create_access_token(identity = user.id)
-    refresh_token = create_refresh_token(identity= user.id)
-    return jsonify({'accessToken':token, 'refreshToken': refresh_token})
+        return jsonify({"msg": "Login Failed"}), 401
+
+    refresh_token = create_refresh_token(identity=user.id)
+    # jti = refresh_token.get_jti
+    additional_claims = {"r_jti": get_jti(refresh_token)}
+    token = create_access_token(identity=user.id, additional_claims=additional_claims)
+    return jsonify({"access_token": token, "refresh_token": refresh_token})
+
+@api.route('/logout')
+@jwt_required()
+def logout():
+    access_token_blocked = BlockedTokens(token_id=get_jwt()["jti"])
+    refresh_token_blocked = BlockedTokens(token_id=get_jwt()["r_jti"])
+    db.session.add(access_token_blocked)
+    db.session.add(refresh_token_blocked)
+    db.session.commit()
+    return jsonify({"msg": "User logged out"})
+
 
 @api.route('/users')
 def get_users():
@@ -255,100 +289,91 @@ def get_users():
     return jsonify(response_body)
 
 
-@api.route("/favorites", methods = ['POST'])
+@api.route("/favorites", methods=['POST'])
 @jwt_required()
-def post_favorites():
+def toggle_favorite():
     user_id = get_jwt_identity()
-    element_type = request.json.get('element')
+    element_type = request.json.get('type')
     element_id = request.json.get('id')
     msg = ""
-    match element_type:
-        case 'character':
-            favorite = Favorites_Characters(user_id= user_id, element_id = element_id)
-        case 'films':
-            favorite = Favorites_Films(user_id= user_id, element_id = element_id)
-        case 'species':
-            favorite = Favorites_Species(user_id= user_id, element_id = element_id)
-        case 'planets':
-            favorite = Favorites_Planets(user_id= user_id, element_id = element_id)
-        case 'vehicles':
-            favorite = Favorites_Vehicles(user_id= user_id, element_id = element_id)
-        case 'starships':
-            favorite = Favorites_Starships(user_id= user_id, element_id = element_id)
-        case _:
-            return jsonify({'msg': 'element type not recognised'}), 400
 
-    db.session.add(favorite)
+    favorites_dict = {
+        'characters': Favorites_Characters,
+        'films': Favorites_Films,
+        'species': Favorites_Species,
+        'planets': Favorites_Planets,
+        'vehicles': Favorites_Vehicles,
+        'starships': Favorites_Starships,
+    }
+
+    model_class = favorites_dict[element_type]
+
+    favorite = model_class.query.filter_by(user_id=user_id, element_id=element_id).first()
+
+    if favorite is not None:
+        db.session.delete(favorite)
+    else:
+        db.session.add(favorites_dict[element_type](user_id=user_id, element_id=element_id))
+
     try:
         db.session.commit()
     except:
         return 'Favorite already in user favorites', 200
 
-    return 'Favorite added', 200
+    #TODO: here a for can be used to get all teh favorites, iterating over favorites dic, and creating favs
 
-@api.route("/favorites", methods = ['DELETE'])
-@jwt_required()
-def delete_favorites():
-    user_id = get_jwt_identity()
-    element_type = request.json.get('element')
-    element_id = request.json.get('id')
-    msg = ""
-    match element_type:
-        case 'characters':
-            favorite = Favorites_Characters(user_id= user_id, element_id = element_id)
-        case 'films':
-            favorite = Favorites_Films(user_id= user_id, element_id = element_id)
-        case 'species':
-            favorite = Favorites_Species(user_id= user_id, element_id = element_id)
-        case 'planets':
-            favorite = Favorites_Planets(user_id= user_id, element_id = element_id)
-        case 'vehicles':
-            favorite = Favorites_Vehicles(user_id= user_id, element_id = element_id)
-        case 'starships':
-            favorite = Favorites_Starships(user_id= user_id, element_id = element_id)
-        case _:
-            print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-            return jsonify({'msg': 'element type not recognised'}), 400
+    fav_starships = Favorites_Starships.query.filter_by(user_id=user_id).all()
+    fav_characters = Favorites_Characters.query.filter_by(user_id=user_id).all()
+    fav_films = Favorites_Films.query.filter_by(user_id=user_id).all()
+    fav_species = Favorites_Species.query.filter_by(user_id=user_id).all()
+    fav_planets = Favorites_Planets.query.filter_by(user_id=user_id).all()
+    fav_vehicles = Favorites_Vehicles.query.filter_by(user_id=user_id).all()
     
-    try:
-        db.session.add(favorite)
-        db.session.commit()
-    except:
-        return 'Hola', 400
-    return 'Favorite added', 200
+    
+    favs = {
+        'characters':  [fav.serialize() for fav in fav_characters],
+        'films':  [fav.serialize() for fav in fav_films],
+        'species':  [fav.serialize() for fav in fav_species],
+        'planets':  [fav.serialize() for fav in fav_planets],
+        'vehicles':  [fav.serialize() for fav in fav_vehicles],
+        'starships':  [fav.serialize() for fav in fav_starships],
+    }
+
+    return jsonify(favs), 200
 
 
 @api.route("/favorites")
 @jwt_required()
 def get_favorites():
     user_id = get_jwt_identity()
-    #Querying for user favorites
-    characters = Favorites_Characters.query.filter(Favorites_Characters.user_id == user_id).all()
-    films = Favorites_Films.query.filter(Favorites_Films.user_id == user_id).all()
-    species = Favorites_Species.query.filter(Favorites_Species.user_id == user_id).all()
-    planets = Favorites_Planets.query.filter(Favorites_Planets.user_id == user_id).all()
-    vehicles = Favorites_Vehicles.query.filter(Favorites_Vehicles.user_id == user_id).all()
-    starships = Favorites_Starships.query.filter(Favorites_Starships.user_id == user_id).all()
+    # Querying for user favorites
+    fav_starships = Favorites_Starships.query.filter_by(user_id=user_id).all()
+    fav_characters = Favorites_Characters.query.filter_by(user_id=user_id).all()
+    fav_films = Favorites_Films.query.filter_by(user_id=user_id).all()
+    fav_species = Favorites_Species.query.filter_by(user_id=user_id).all()
+    fav_planets = Favorites_Planets.query.filter_by(user_id=user_id).all()
+    fav_vehicles = Favorites_Vehicles.query.filter_by(user_id=user_id).all()
+    
+    
+    favs = {
+        'characters':  [fav.serialize() for fav in fav_characters],
+        'films':  [fav.serialize() for fav in fav_films],
+        'species':  [fav.serialize() for fav in fav_species],
+        'planets':  [fav.serialize() for fav in fav_planets],
+        'vehicles':  [fav.serialize() for fav in fav_vehicles],
+        'starships':  [fav.serialize() for fav in fav_starships],
+    }
 
-    response = jsonify({
-        'characters' : ([character.serialize() for character in characters]),
-        'films' : ([film.serialize() for film in films]),
-        'species' : ([specie.serialize() for specie in species]),
-        'planets' : ([planet.serialize() for planet in planets]),
-        'vehicles' : ([vehicle.serialize() for vehicle in vehicles]),
-        'starships' : ([starship.serialize() for starship in starships]),}
-    )
+    return jsonify(favs), 200
 
-    return response
+
 
 @api.route("/refresh")
 @jwt_required(refresh=True)
 def refresh():
     identity = get_jwt_identity()
-    db.session.add(BlockedTokens(token_id = get_jwt()['jti']))
+    db.session.add(BlockedTokens(token_id=get_jwt()['jti']))
     db.session.commit()
-    access_token = create_access_token(identity = identity)
-    refresh_token = create_refresh_token(identity = identity)
-    return jsonify({'access_token': access_token, 'refresh_token': refresh_token} )
-
-
+    access_token = create_access_token(identity=identity)
+    refresh_token = create_refresh_token(identity=identity)
+    return jsonify({'access_token': access_token, 'refresh_token': refresh_token})

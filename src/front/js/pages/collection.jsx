@@ -7,8 +7,6 @@ import { Pagination } from "../component/pagination.jsx";
 import { Page404 } from "./404.jsx";
 import { useSearchParams } from "react-router-dom";
 
-import "../../styles/collection.css";
-
 export function Collection() {
     const { store, actions } = useContext(Context);
     const params = useParams();
@@ -16,17 +14,17 @@ export function Collection() {
 
     useEffect(() => {
         async function func() {
-            await actions.getCollectionData(params.element,searchParams.get("page"),10)
+            await actions.getCollectionData(params.element,searchParams.get("page"),24)
         }
         func()
     }, [searchParams.get("page")])
 
     return (
         store.Collection ?
-            <div className="container d-flex flex-column align-items-center">
+            <div className="collection">
                 < h1 > {params.element.toUpperCase()}</h1 >
                 <Pagination pages={store.Collection['total pages']} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>
-                <div className="row g-2 mb-3">
+                <div className="card-collection-container">
                 <CardCollection data={store.Collection['results']} type={params.element} />
                 </div>
                 <Pagination pages={store.Collection['total pages']} currentPage={parseInt(searchParams.get("page"))} element={params.element} ></Pagination>

@@ -16,7 +16,7 @@ from api.commands import setup_commands
 from flask_jwt_extended import JWTManager
 
 
-ACCESS_EXPIRES = timedelta(seconds=5)
+ACCESS_EXPIRES = timedelta(days = 1)
 
 #from models import Person
 

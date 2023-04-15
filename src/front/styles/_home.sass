@@ -1,0 +1,32 @@
+@use 'colors'
+
+.home
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+
+    .card-collection-container
+        width: 80%
+        max-width: 1200px
+        display: flex
+        flex-direction: column
+        align-items: center
+        
+        .horizontal-scroll
+            width: 100%
+            display: flex
+            
+            gap: 1em
+            overflow-x: scroll
+            padding: 1em
+
+            .card
+                width: 20em
+                border: solid 1px red
+                flex-shrink: 0
+                overflow: hidden
+                border-radius: 1em
+
+                img
+                    width: 100%

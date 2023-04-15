@@ -4,7 +4,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 	return {
 
 		store: {
-			Favorites: {
+			favorites: {
 				characters: [],
 				films: [],
 				planets: [],
@@ -18,6 +18,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 		actions: {
 
 			loadTokens: () => {
+				console.log("loading tokens")
 				let accessToken = localStorage.getItem('accessToken')
 				let refreshToken = localStorage.getItem('refreshToken')
 				setStore({ refreshToken: refreshToken, accessToken: accessToken })
@@ -48,7 +49,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			},
 
-
 			//Get data for each element
 			getElementData: async (element, id) => {
 
@@ -64,14 +64,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 
 			//Toogle from favorites
-			toogleFav: (name, type, id) => {
-				let str = getStore()
-				if (str.Favorites.some((e) => e.type == type && e.id == id)) {
-					str.Favorites = str.Favorites.filter((e) => !(e.type == type && e.id == id))
-				} else {
-					str.Favorites = [...str.Favorites, { name: name, type: type, id: id }]
-				}
-				setStore(str)
+			toogleFav: async (type, id) => {
+				const response = await fetchProtected(`${apiUrl}/favorites`,
+					{
+						method: 'POST',
+						headers: {
+							"Authorization": 'Bearer ' + getStore().accessToken,
+							"Content-Type": "application/json"
+						},
+						body: JSON.stringify({ type, id })
+					})
+				const data = await response.json()
+				setStore({ favorites: data })
 			},
 
 
@@ -79,7 +83,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getFavorites: async () => {
 				let response = await fetchProtected(`${apiUrl}/favorites`)
 				const data = await response.json()
-				setStore({Favorites : data})
+				setStore({ favorites: data })
 
 			},
 
@@ -96,19 +100,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 					return resp.statusText
 				}
 				let data = await resp.json()
-				setStore({ refreshToken: data.refreshToken, accessToken: data.accessToken })
-				localStorage.setItem("accessToken", data.accessToken)
-				localStorage.setItem("refreshToken", data.refreshToken)
+				setStore({ refreshToken: data.refresh_token, accessToken: data.access_token })
+				localStorage.setItem("accessToken", data.access_token)
+				localStorage.setItem("refreshToken", data.refresh_token)
 
-				//load user favorites
-				resp = await fetch(`${apiUrl}/favorites`, {
-					headers: {
-						"Authorization": 'Bearer ' + getStore().accessToken
-					}
-				})
-				data = await resp.json()
-				console.log(data)
-				//setStore({Favorites : data})
+				getActions().getFavorites()
 
 				return true
 			},
@@ -121,16 +117,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 					},
 					body: JSON.stringify({ email, password })
 				})
+
 				if (!response.ok) {
-					console.error("There was a problem registering new user:" + response.statusText)
+					console.error("There was a problem registering new user, status:" + response.status)
+					return ((response.status == 409) ?
+						'This email already exist, please try another one.'
+						:response.status == 400?
+						'You must fill all the fields'
+						:
+						'There was an error registering, please try again later.')
 				}
-				console.log("New user registered")
+
+				return('ok')
 
 			},
 
 			logout: async () => {
-				let resp = await fetch(apiUrl + "/logout", {
-					method: 'POST',
+				let resp = await fetchProtected(apiUrl + "/logout", {
+					method: 'GET',
 					headers: {
 						"Authorization": 'Bearer ' + getStore().accessToken
 					}
@@ -150,6 +154,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 	async function fetchProtected(resource = '', options = {}) {
 		console.log('fetching protected')
+		console.log(getStore.accessToken)
 		const { headers, ...opt } = options
 		let response = await fetch(resource = resource, options = {
 			...opt,
@@ -176,7 +181,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.setItem("refreshToken", data.refresh_token)
 				fetchProtected(resource, options)
 			}
-		}else{
+		} else {
 			return response
 		}
 	}

@@ -1,0 +1,27 @@
+@use 'colors'
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap')
+
+$gap-1 : 1em
+$gap-2 : 1em
+  
+html, body
+    font-family: 'Roboto', sans-serif 
+    background-color: colors.$bg-color
+    color: white
+
+button, .btn
+    background-color: colors.$sw-2
+    text-decoration: none
+    color: colors.$sw-4
+    border-radius: 0.5em
+
+    padding: 0.5em 1em
+    margin: 0.5em
+
+    transition: background-color 0.3s ease
+
+    &:hover
+        background-color: colors.$sw-3
+        
+
+

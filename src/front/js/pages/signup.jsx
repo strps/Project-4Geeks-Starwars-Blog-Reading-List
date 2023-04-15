@@ -17,9 +17,8 @@ export const Signup = props => {
 	async function submitSignup(e) {
 		e.preventDefault()
 		let resp = await actions.signup(email, password)
-		console.log(resp)
-		if(resp === 'email already in use'){
-			setMsg(<p className='text-danger'>This email already exist, please try another one.</p>)
+		if(resp != 'ok'){
+			setMsg(<p className='text-danger'>{respome}</p>)
 			return
 		}else {
 			setSignedup(true)

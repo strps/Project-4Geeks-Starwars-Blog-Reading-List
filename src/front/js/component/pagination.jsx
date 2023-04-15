@@ -6,7 +6,7 @@ export function Pagination({ currentPage, pages, element }) {
 
         <nav aria-label="...">
             <ul className="pagination">
-                <li className={"page-item"+((currentPage==0)?" disabled": "")}>
+                <li className={"page-item"+((currentPage<=1)?" disabled": "")}>
                     <Link className="page-link" to={`/${element}?page=${currentPage-1}`}>Previous</Link>
                 </li>
 
@@ -17,7 +17,7 @@ export function Pagination({ currentPage, pages, element }) {
                         )
                     })
                 }
-                <li className={"page-item"+((currentPage==pages)?" disabled": "")}>
+                <li className={"page-item"+((currentPage>=pages)?" disabled": "")}>
                     <Link className="page-link" to={`/${element}?page=${currentPage+1}`}>Next</Link>
                 </li>
             </ul>

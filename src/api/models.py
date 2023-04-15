@@ -292,18 +292,16 @@ class Species(db.Model):
 class Favorites_Planets(db.Model):
     '''Favorites Planets'''
     __tablename__ = 'favorites_planets'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'),primary_key=True)
     user = db.relationship('User')
-    element_id = db.Column(db.Integer, db.ForeignKey('planet.id'))
+    element_id = db.Column(db.Integer, db.ForeignKey('planet.id'),primary_key=True)
     element = db.relationship('Planet')
 
-    # planet = db.relationship('Planet', backref='Favorites_Planets', lazy=True)
 
     def serialize(self):
         return {
-            'element': 'planets',
-            'name' : self.planet.name,
+            'type': 'planets',
+            'name' : self.element.name,
             'id' : self.element_id
         }
 
@@ -316,12 +314,12 @@ class Favorites_Characters(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     user = db.relationship('User')
     element_id = db.Column(db.Integer, db.ForeignKey('character.id'), primary_key=True)
-    character = db.relationship('Character', backref='Favorites_Characters', lazy=True)
+    element = db.relationship('Character')
 
     def serialize(self):
         return {
-            'element': 'characters',
-            'name' : self.character.name,
+            'type': 'characters',
+            'name' : self.element.name,
             'id' : self.element_id
         }
 
@@ -337,12 +335,11 @@ class Favorites_Vehicles(db.Model):
     element_id = db.Column(db.Integer, db.ForeignKey('vehicles.id'))
     element = db.relationship('Vehicles')
 
-    # vehicle = db.relationship('Vehicles', backref='Favorites_Vehicles', lazy=True)
 
     def serialize(self):
         return {
-            'element': 'vehicles',
-            'name' : self.vehicle.name,
+            'type': 'vehicles',
+            'name' : self.element.name,
             'id' : self.element_id
         }
 
@@ -356,30 +353,27 @@ class Favorites_Species(db.Model):
     element_id = db.Column(db.Integer, db.ForeignKey('species.id'))
     element = db.relationship('Species')
 
-    # specie = db.relationship('Species', backref='Favorites_Species', lazy=True)
 
     def serialize(self):
         return {
-            'element': 'species',
-            'name' : self.specie.name,
+            'type': 'species',
+            'name' : self.element.name,
             'id' : self.element_id
         }
 
 class Favorites_Films(db.Model):
     '''Favorites Films'''
     __tablename__ = 'favorites_films'
-    #id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     user = db.relationship('User')
     element_id = db.Column(db.Integer, db.ForeignKey('films.id'), primary_key=True)
     element = db.relationship('Films')
 
-    # film = db.relationship('Films', backref='Films', lazy=True)
 
     def serialize(self):
         return {
-            'element': 'films',
-            'name' : self.film.name,
+            'type': 'films',
+            'name' : self.element.title,
             'id' : self.element_id
         }
 
@@ -390,12 +384,11 @@ class Favorites_Starships(db.Model):
     user = db.relationship('User')
     element_id = db.Column(db.Integer, db.ForeignKey('starships.id'), primary_key=True)
     element = db.relationship('Starships')
-    # starship = db.relationship('Favorites_Starships', backref='Starships', lazy=True)
 
     def serialize(self):
         return {
-            'element': 'starships',
-            'name' : self.starship.name,
+            'type': 'starships',
+            'name' : self.element.name,
             'id' : self.element_id
         }
 

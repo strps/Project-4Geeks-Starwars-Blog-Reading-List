@@ -1,0 +1,17 @@
+@use 'colors'
+
+.collection
+    display: flex
+    flex-direction: column
+    align-items: center
+
+    .card-collection-container
+        width: 80%
+        max-width: 1200px
+        display: grid
+        grid-template-columns: repeat(auto-fill, minmax(15em, 1fr))
+        gap: 1em
+
+    .card img
+        width: 100%
+

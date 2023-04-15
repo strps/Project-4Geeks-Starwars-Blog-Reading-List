@@ -6,61 +6,27 @@ import { Context } from "../store/appContext";
 export const Navbar = () => {
 	const { store, actions } = useContext(Context);
 
-	// function mapElementFavorites(elements) {
-	// 	return (
-	// 		elements.map((e) => {
-	// 			return (
-	// 				<li key={e.id} className="fav-li">
-	// 					<Link className="dropdown-item" to={e.element + "/" + e.id}>
-	// 						{e.name}
-	// 					</Link>
-	// 					<button onClick={() => { actions.toogleFav(e.name, e.element, e.id) }}>
-	// 						<i
-	// 							className="bi bi-trash"
-	// 						></i>
-	// 					</button>
-	// 				</li>
-	// 			)
-	// 		}))
-	// }
-
-return (
-	<nav className="navbar navbar-dark bg-dark">
-		<div className="container">
+	return (
+		<nav className="navbar">
 			<Link to="/">
 				<img className="logo" src="https://lumiere-a.akamaihd.net/v1/images/sw_logo_stacked_2x-52b4f6d33087_7ef430af.png" />
 			</Link>
 			<div className="ml-auto">
 				{
 					(store.accessToken) ?
-						<div className="dropdown">
-							<button
-								className="btn btn-secondary dropdown-toggle"
-								type="button"
-								data-bs-toggle="dropdown"
-								aria-expanded="false"
-							>
-								Favorites
-							</button>
-							<ul className="dropdown-menu">
-								{/* {mapElementFavorites(store.Favorites.characters)}
-								{mapElementFavorites(store.Favorites.characters)}
-								{mapElementFavorites(store.Favorites.characters)}
-								{mapElementFavorites(store.Favorites.characters)}
-								{mapElementFavorites(store.Favorites.characters)}
-								{mapElementFavorites(store.Favorites.characters)} */}
-							</ul>
+						<div className="dropdown-">
+							<Link to='/favorites' className="btn">Favorites</Link>
+							<button onClick={() => { actions.logout() }}>Log out</button>
 						</div>
 						:
-						<ul>
-							<li>
-								<Link to="/login" className="btn btn-secondary">Log in</Link>
-								<Link to="/signup" className="btn btn-secondary">Sign in</Link>
-							</li>
-						</ul>
+
+						<div>
+							<Link to="/login" className="btn">Log in</Link>
+							<Link to="/signup" className="btn">Sign in</Link>
+						</div>
+
 				}
 			</div>
-		</div>
-	</nav>
-);
+		</nav>
+	);
 };

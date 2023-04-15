@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import ScrollToTop from "./component/scrollToTop";
 
 import { Home } from "./pages/home";
 import { Element } from "./pages/element.jsx";
@@ -10,7 +9,6 @@ import { Page404 } from "./pages/404.jsx";
 import { Navbar } from "./component/navbar"
 import { Footer } from "./component/footer"
 import injectContext from "./store/appContext";
-import { Component } from "react/cjs/react.production.min";
 import { Signup } from "./pages/signup.jsx";
 import { Login } from "./pages/login.jsx";
 import {Favorites} from "./pages/favorites.jsx"
